@@ -35,10 +35,11 @@ function onRequest(req,res)
     console.log('Destination host:'+headers.host);
     console.log('URL:'+req.url);
     console.log('QWAC key:'+conf.qwac_key);
+    console.log('Remove Digest Flag:'+conf.remove_digest);
     console.log('============================================');
 
     console.log("Headers Before : "+JSON.stringify(headers, null, 4));
-    generateBGSignature(headers,body);
+    generateBGSignature(headers,body,req.method);
     console.log("Headers After  : "+JSON.stringify(headers, null, 4));
 
     var options = {
@@ -111,7 +112,7 @@ function onRequest(req,res)
 
 
 // HTTP Signature function from develooper.luxhub.com
-function generateBGSignature(headers, body) {
+function generateBGSignature(headers, body,method) {
     // added for compilation
     let QSEALCert=fs.readFileSync(conf.qseal_cert,'ascii');
     let QSEALKey=fs.readFileSync(conf.qseal_key,'ascii');
@@ -128,11 +129,23 @@ function generateBGSignature(headers, body) {
     const cert = Certificate.fromPEM(QSEALCert);
 
     const digest = "SHA-256=" + crypto.createHash('sha256').update(body).digest('base64');
-    let signingString = "digest: " + digest + "\n" +
+    
+    let signingString="";
+    if(method!="GET" || "TRUE"!=conf.remove_digest)
+    {
+        signingString = "digest: " + digest + "\n" +
         "x-request-id: " + headers["x-request-id"] + "\n" +
         "date: " + headers["date"];
+    }
+    else
+    { // LHONE does not like digests
+        signingString = "x-request-id: " + headers["x-request-id"] + "\n" +
+        "date: " + headers["date"];
+    }
 
-    let signatureHeaders = "Digest X-Request-ID Date";
+    let signatureHeaders = "X-Request-ID Date";
+    if(method!="GET" || "TRUE"!=conf.remove_digest)
+        {signatureHeaders="Digest X-Request-ID Date";} // LH1 does not like digests
 
     if (typeof headers["psu-id"] !== "undefined") {
         signingString += "\npsu-id: " + headers["psu-id"];
@@ -149,7 +162,9 @@ function generateBGSignature(headers, body) {
         signatureHeaders += " tpp-redirect-uri";
     }
 
-    headers["Digest"] = digest;
+    if(method!="GET" || "TRUE"!=conf.remove_digest)
+	{headers["Digest"] = digest;} // LH1 does not like digests
+
     let issuer=cert.issuer;
     headers["Signature"] = 'keyId="' + getBgKeyId(cert)+'"'+
         // not working
@@ -159,6 +174,27 @@ function generateBGSignature(headers, body) {
         ", signature=\"" + crypto.createSign('SHA256').update(signingString).sign(QSEALKey, 'base64') + "\"";
 
     console.log("Signing4:"+signingString);
+
+    // LHOne does not like lowercase !!!
+    var value=headers["lh-token-information"];
+    if(value!=null)
+    {
+	delete headers["lh-token-information"];
+        headers["LH-Token-Information"]=value;
+    }
+    value=headers["lh-user-id"];
+    if(value!=null)
+    {
+        delete headers["lh-user-id"];
+        headers["LH-USER-Id"]=value;
+    }
+    value=headers["date"];
+    if(value!=null)
+    {
+        delete headers["date"];
+        headers["Date"]=value;
+    }
+
     return headers;
 }
 

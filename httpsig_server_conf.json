@@ -1,8 +1,7 @@
 {
-"client_id":"PSDLU-CSSF-f161795539c19902dc6516998f4addb5-5a770f40-604d-11b2-0350-005056b1598b",
-"client_secret":"8bf63c9f-d42e-4809-8a9a-b4125eb08d8f",
-"qwac_key":"QWAC-key.pem",
-"qwac_cert":"QWAC-cert.pem",
-"qseal_key":"QSealC-key.pem",
-"qseal_cert":"QSealC-cert.pem"
+"qwac_key":"QWAC-key-lh1-psx.pem",
+"qwac_cert":"QWAC-cert-lh1-psx.pem",
+"qseal_key":"QSealC-key-lh1-psx.pem",
+"qseal_cert":"QSealC-cert-lh1-psx.pem",
+"remove_digest":"TRUE"
 }
