@@ -21,6 +21,8 @@ function onRequest(req,res)
     //console.log(util.inspect(req));
 
     var headers = req.headers;
+    headers["Accept-Encoding"]="identity"; // force no-compression, because node does not support seamless http compression
+    //req.removeHeader("accept-encoding"); // just in case headers contained lowercased stuff
 
 
     // prints out information
@@ -30,10 +32,8 @@ function onRequest(req,res)
     console.log('--------------------');
     console.log(body);
     console.log('--------------------');
-    console.log('Destination host:');
-    console.log(headers.host);
-    console.log('URL:');
-    console.log(req.url);
+    console.log('Destination host:'+headers.host);
+    console.log('URL:'+req.url);
     console.log('QWAC key:'+conf.qwac_key);
     console.log('============================================');
 
@@ -55,9 +55,11 @@ function onRequest(req,res)
     var remotereq=https.request(options, remoteres => {
       var responsebody="";
       remoteres.on('data', responsechunk => {
+	console.log("received chunck"+responsechunk.toString('utf-8'));
         responsebody+=responsechunk.toString('utf-8');
       });
       remoteres.on('end', () => {
+	console.log("received end");
         res.writeHead(remoteres.statusCode,remoteres.headers);
         res.end(responsebody);
       });
@@ -65,8 +67,15 @@ function onRequest(req,res)
     remotereq.on('error', e => {
       console.error(e);
     });
-
-    remotereq.end(body);
+    if(body=="")
+    {
+      console.log("sending request without body");
+      remotereq.end();
+    }
+    else
+    {
+      remotereq.end(body);
+    }
 
   })
 }
@@ -155,7 +164,7 @@ function generateBGSignature(headers, body) {
 
 function getBgKeyId(cert)
 {
-  var S="SN="+cert.serialNumber+", CA=";
+  var S="SN="+cert.serialNumber+",CA="; // whitespace is not good for LH1
   for(let i=cert.issuer.attributes.length-1;i>=0;i--)
   {
     // console.log(JSON.stringify(cert.issuer.attributes[i]));
