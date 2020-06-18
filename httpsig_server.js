@@ -194,6 +194,20 @@ function generateBGSignature(headers, body,method) {
         delete headers["date"];
         headers["Date"]=value;
     }
+    value=headers["lh-bic-provider"];
+    if(value!=null)
+    {
+        delete headers["lh-bic-provider"];
+        headers["LH-BIC-Provider"]=value;
+    }
+    value=headers["x-request-id"];
+    if(value!=null)
+    {
+        delete headers["x-request-id"];
+        headers["X-Request-ID"]=value;
+    }
+
+
 
     return headers;
 }
