@@ -1,7 +1,0 @@
-{
-"qwac_key":"QWAC-key-lh1-psx.pem",
-"qwac_cert":"QWAC-cert-lh1-psx.pem",
-"qseal_key":"QSealC-key-lh1-psx.pem",
-"qseal_cert":"QSealC-cert-lh1-psx.pem",
-"remove_digest":"TRUE"
-}
