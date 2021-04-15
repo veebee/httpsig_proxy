@@ -1,0 +1,7 @@
+{
+   "qwac_key": "./path/to/qwac-key.pem",
+   "qwac_cert":"./path/to/qwac-cert.pem",
+   "qseal_key":"./path/to/qseal-key.pem",
+   "qseal_cert":"./path/to/qseal-cert.pem",
+   "remove_digest":"TRUE"
+}
