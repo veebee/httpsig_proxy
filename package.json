@@ -1,0 +1,15 @@
+{
+   "name": "httpsig_proxy",
+   "version": "1.0.0",
+   "description": "An HTTP proxy for generating HTTP signature header over incoming HTTP requests",
+   "main": "src/server.js"
+   "dependencies": {
+      "http-signature": "^1.3.5",
+	    "body-parser": "^1.19.0",
+	    "@fidm/x509": "^1.2.1"
+   },
+   "engines": {
+      "node": ">= 10.19.0",
+	  "npm": ">= 6.14.4"
+   }
+}
