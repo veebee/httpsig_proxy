@@ -15,6 +15,7 @@ The paths to the certificates and keys must be defined in the config.json file, 
 - The configured port (default 3000) is available.
 ### Installation and deployment
 The process for deploying the application is straightforward:
+
     npm install
     node src/server.js
 
@@ -25,6 +26,7 @@ The proxy can also be deployed in a Docker container, using the Dockerfile provi
 - The current folder is the main (top) folder from the repository;
 ### Building the image
 Simply run a docker build as follows:
+
     docker build -t <your-username>/httpsig_proxy .
 ### Running the image
     docker run -p <configured-port> -d <your-name>/httpsig_proxy
